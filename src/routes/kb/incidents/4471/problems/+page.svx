@@ -1,0 +1,62 @@
+---
+layout: runbook
+title: '#4471 · split by problem'
+owner: support desk
+status: open
+reviewed: 2026-10-29
+signature: sergiobk201
+source: reports-4471.json, desk-notes.json and tenants/, from the kb export of 2026-10-04
+tickets:
+  parser: https://github.com/sergiobk201/support-kb/issues/1
+  hint: https://github.com/sergiobk201/support-kb/issues/2
+  one-day: https://github.com/sergiobk201/support-kb/issues/3
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) was merged on subject line ([decision 0001](/kb/decisions/0001-dedupe-by-subject))
+and marked known: one issue, one fix queued. Its own cause table disagrees once the page renders, and
+the reports split once more when you read them. Each problem below has a ticket of its own.
+
+<ProblemTable ticket={4471} {tickets} />
+
+## The problems
+
+**`parser`: the shared parser reads every date month first.** Every tenant on file writes the day
+first, so day and month come out swapped: "Booked for 2 December. The invite says 12 February."
+This is the fix #4471 has queued.
+
+**`hint`: booking-v3 tells day-first tenants to type the month first.** Its date field prints
+`MM/DD/YYYY`. People type what it says, and the form reads the date the tenant's way, day first.
+Only form reports from booking-v3 tenants land here. The parser fix does not touch this path, so
+these reports keep coming after #4471 closes.
+
+**`one-day`: invites and reminders show the day before.** "Client in Lisbon got Tuesday. Client in
+Toronto got Monday. Same meeting." The date keeps its month and loses a day, which no day/month swap
+can do; it looks like a time zone shift. The desk read these reports as one-day moves
+(`desk-notes.json`). The cause table on #4471 still files them under `parser` by tenant.
+
+<Callout kind="warn">
+The parser fix closes the parser ticket only. Keep the hint and one-day tickets open until their own
+fixes ship.
+</Callout>
+
+## How this was counted
+
+- From `reports-4471.json`: one report per id (`uniqueById`), because the export pages overlap.
+- The desk's one-day reading comes first. Every other report goes by cause, the tenant's locale,
+  booking form and channel, as `causes.ts` decides.
+- Intake tags are not used. They follow the reporter's browser, not the tenant.
+- The table is built at render time, so it stays right while the desk keeps merging.
+
+## For the desk
+
+- Before you mark a big ticket known, render its page and read the cause table, not the paragraph above it.
+- Subject lines do not tell these problems apart (see the note under the table). Decision 0001 still
+  says to merge on subject; a new decision record has to replace it. This page does not.
+
+<RenderStamp {signature} />
