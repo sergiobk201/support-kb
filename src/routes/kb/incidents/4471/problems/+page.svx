@@ -2,14 +2,18 @@
 layout: runbook
 title: '#4471 · split by problem'
 owner: support desk
-status: open
+status: closed
 reviewed: 2026-10-29
 signature: sergiobk201
-source: reports-4471.json, desk-notes.json and tenants/, from the kb export of 2026-10-04
+source: reports-4471.json, desk-notes.json and tenants/ from the kb export of 2026-10-04; engineering update on #4471 (closed 2026-10-05)
 tickets:
   parser: https://github.com/sergiobk201/support-kb/issues/1
   hint: https://github.com/sergiobk201/support-kb/issues/2
   one-day: https://github.com/sergiobk201/support-kb/issues/3
+outcome:
+  parser: fixed
+  hint: won't fix
+  one-day: no fix, unexplained
 ---
 
 <script>
@@ -21,37 +25,40 @@ tickets:
 [#4471](/kb/incidents/4471) was merged on subject line ([decision 0001](/kb/decisions/0001-dedupe-by-subject))
 and marked known: one issue, one fix queued. Its own cause table disagrees once the page renders, and
 the reports split once more when you read them. Each problem below has a ticket of its own.
+Engineering closed #4471 on 5 October.
 
-<ProblemTable ticket={4471} {tickets} />
+<ProblemTable ticket={4471} {tickets} {outcome} />
 
 ## The problems
 
-**`parser`: the shared parser reads every date month first.** Every tenant on file writes the day
-first, so day and month come out swapped: "Booked for 2 December. The invite says 12 February."
-This is the fix #4471 has queued.
+**`parser`: the shared parser read every date month first.** Every tenant on file writes the day
+first, so day and month came out swapped: "Booked for 2 December. The invite says 12 February."
+Fixed: `fix(dates): parse dd/mm for eu locales`.
 
-**`hint`: booking-v3 tells day-first tenants to type the month first.** Its date field prints
-`MM/DD/YYYY`. People type what it says, and the form reads the date the tenant's way, day first.
-Only form reports from booking-v3 tenants land here. The parser fix does not touch this path, so
-these reports keep coming after #4471 closes.
+**`hint`: booking-v3 told day-first tenants to type the month first.** Its date field printed
+`MM/DD/YYYY`. People typed what it said, and the form read the date the tenant's way, day first.
+The parser fix did not touch this path. Won't fix: the booking-v3 form is retired, so the path is gone.
 
 **`one-day`: invites and reminders show the day before.** "Client in Lisbon got Tuesday. Client in
 Toronto got Monday. Same meeting." The date keeps its month and loses a day, which no day/month swap
 can do; it looks like a time zone shift. The desk read these reports as one-day moves
-(`desk-notes.json`). The cause table on #4471 still files them under `parser` by tenant.
+(`desk-notes.json`) but files them under `parser` by tenant. The parser fix cannot move a date by one
+day, and the engineering update does not mention them. Nothing in the kb explains them yet.
 
 <Callout kind="warn">
-The parser fix closes the parser ticket only. Keep the hint and one-day tickets open until their own
-fixes ship.
+#4471 closed with the parser fix, and the hint problem ends with the booking-v3 form. The one-day
+reports have no fix and no explanation. If another one comes in, reopen its ticket; do not merge it
+into parser.
 </Callout>
 
 ## How this was counted
 
 - From `reports-4471.json`: one report per id (`uniqueById`), because the export pages overlap.
-- The desk's one-day reading comes first. Every other report goes by cause, the tenant's locale,
-  booking form and channel, as `causes.ts` decides.
+- The desk's way: every report counts where #4471's cause table files it, by the tenant's locale,
+  booking form and channel (`causes.ts`). The one-day reports come from the desk's own notes and
+  count under `parser` as well.
 - Intake tags are not used. They follow the reporter's browser, not the tenant.
-- The table is built at render time, so it stays right while the desk keeps merging.
+- The table is built from the exported data at render time, so it follows the next export.
 
 ## For the desk
 
