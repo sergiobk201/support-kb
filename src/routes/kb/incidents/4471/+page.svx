@@ -12,6 +12,8 @@ reviewed: 2026-09-30
   import Callout from '#lib/kb/Callout.svelte';
 </script>
 
+**Split by problem:** see [#4471 · split by problem](/kb/incidents/4471/problems).
+
 Since April, people have told us their bookings land on the wrong day: a month flipped. By
 4 October the desk had **412 reports**.
 
