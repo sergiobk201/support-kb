@@ -4,7 +4,7 @@ title: '#4471 · split by problem'
 owner: support desk
 status: closed
 reviewed: 2026-10-29
-signature: sergiobk201
+signature: v1.eyJzdWIiOiI1NzU0IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyNzkxMDEsImV4cCI6MTc5MzM2NTUwMX0.9fM7rmHkxtlgRBHao1J2dj48WmUbuC8LeD3DyrxpP8Q
 source: reports-4471.json, desk-notes.json and tenants/ from the kb export of 2026-10-04; engineering update on #4471 (closed 2026-10-05)
 tickets:
   parser: https://github.com/sergiobk201/support-kb/issues/1
